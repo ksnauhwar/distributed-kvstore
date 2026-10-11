@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "Running tests..."
+./gradlew test
+if [ $? -ne 0 ]; then
+  echo "Tests failed. Commit aborted."
+  exit 1
+fi
+
+echo "Building..."
+./gradlew build
+if [ $? -ne 0 ]; then
+  echo "Build failed. Commit aborted."
+  exit 1
+fi
