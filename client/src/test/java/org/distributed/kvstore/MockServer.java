@@ -13,6 +13,8 @@ public class MockServer {
             Thread thread = new Thread(this::start);
             thread.setDaemon(true);
             thread.start();
+
+            Runtime.getRuntime().addShutdownHook(new Thread(this::cleanUp));
         } catch (IOException e) {
             throw new RuntimeException("Unable to create server");
         }
@@ -27,6 +29,14 @@ public class MockServer {
             serverSocket.accept();
         } catch (IOException e) {
             throw new RuntimeException("Server unable to accept connections");
+        }
+    }
+
+    private void cleanUp() {
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Error while closing the mock server");
         }
     }
 }
