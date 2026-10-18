@@ -19,7 +19,7 @@ public class ConnectionPool {
            return thread;
         });
 
-        houseKeeper.schedule(this::replaceDeadConnections,30, TimeUnit.SECONDS);
+        houseKeeper.scheduleAtFixedRate(this::replaceDeadConnections, 30L, 30L, TimeUnit.SECONDS);
     }
 
     private void replaceDeadConnections() {
