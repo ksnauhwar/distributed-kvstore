@@ -12,12 +12,13 @@ public class ConnectionPool {
     public ConnectionPool(URL loadBalancerUrl) {
         create(loadBalancerUrl);
         this.loadBalancerUrl = loadBalancerUrl;
-        Runtime.getRuntime().addShutdownHook(new Thread(this::cleanUp));
         houseKeeper = Executors.newSingleThreadScheduledExecutor(runnable -> {
-           Thread thread = new Thread(runnable,"connection-pool-house-keeper");
-           thread.setDaemon(true);
-           return thread;
+            Thread thread = new Thread(runnable,"connection-pool-house-keeper");
+            thread.setDaemon(true);
+            return thread;
         });
+        Runtime.getRuntime().addShutdownHook(new Thread(this::cleanUp));
+
 
         houseKeeper.scheduleAtFixedRate(this::replaceDeadConnections, 30L, 30L, TimeUnit.SECONDS);
     }
