@@ -11,8 +11,9 @@ public class ConnectionPool {
     private final ScheduledExecutorService houseKeeper;
     private final URL loadBalancerUrl;
     private final List<Connection> usedConnections = new ArrayList<>(TCP_CONNECTION_POOL_SIZE);
+    private static ConnectionPool connectionPool;
 
-    public ConnectionPool(URL loadBalancerUrl) {
+    private ConnectionPool(URL loadBalancerUrl) {
         create(loadBalancerUrl);
         this.loadBalancerUrl = loadBalancerUrl;
         houseKeeper = Executors.newSingleThreadScheduledExecutor(runnable -> {
@@ -24,6 +25,14 @@ public class ConnectionPool {
 
 
         houseKeeper.scheduleAtFixedRate(this::replaceDeadConnections, 30L, 2L, TimeUnit.MINUTES);
+    }
+
+    public static ConnectionPool getInstance(URL loadBalancerUrl) {
+        if (connectionPool == null) {
+            connectionPool = new ConnectionPool(loadBalancerUrl);
+        }
+
+        return connectionPool;
     }
 
     private void replaceDeadConnections() {
