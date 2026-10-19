@@ -20,7 +20,7 @@ public class ConnectionPool {
         Runtime.getRuntime().addShutdownHook(new Thread(this::cleanUp));
 
 
-        houseKeeper.scheduleAtFixedRate(this::replaceDeadConnections, 30L, 30L, TimeUnit.SECONDS);
+        houseKeeper.scheduleAtFixedRate(this::replaceDeadConnections, 30L, 2L, TimeUnit.MINUTES);
     }
 
     private void replaceDeadConnections() {

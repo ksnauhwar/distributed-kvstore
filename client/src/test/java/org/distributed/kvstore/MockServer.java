@@ -1,10 +1,15 @@
 package org.distributed.kvstore;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
+import java.net.Socket;
 
-public class MockServer {
+public class MockServer implements AutoCloseable {
     private final ServerSocket serverSocket;
+    private String pingResponse = "PONG";
 
     public MockServer() {
         try {
@@ -25,10 +30,30 @@ public class MockServer {
     }
 
     public void start() {
-        try {
-            serverSocket.accept();
+        while (!serverSocket.isClosed()) {
+            try {
+                Socket socket = serverSocket.accept();
+                Thread handler = new Thread(() -> handle(socket));
+                handler.setDaemon(true);
+                handler.start();
+            } catch (IOException e) {
+                return;
+            }
+        }
+    }
+
+    private void handle(Socket socket) {
+        try (socket;
+             BufferedReader requestReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             PrintWriter responseWriter = new PrintWriter(socket.getOutputStream(), true)) {
+            String request;
+            while ((request = requestReader.readLine()) != null) {
+                if (request.equals("PING")) {
+                    responseWriter.println(pingResponse);
+                }
+            }
         } catch (IOException e) {
-            throw new RuntimeException("Server unable to accept connections");
+            // client went away
         }
     }
 
@@ -38,5 +63,14 @@ public class MockServer {
         } catch (IOException e) {
             throw new RuntimeException("Error while closing the mock server");
         }
+    }
+
+     void setIncorrectPingResponse() {
+        pingResponse = "Blah";
+    }
+
+    @Override
+    public void close() throws Exception {
+        cleanUp();
     }
 }

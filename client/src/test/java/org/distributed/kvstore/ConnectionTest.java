@@ -9,19 +9,29 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ConnectionTest {
 
-    final private MockServer server = new MockServer();
-
     @Test
     public void connectionIsAlive() throws Exception {
-        try (Connection connection = new Connection(URL.of(URI.create("http://localhost:" + server.port()), null))) {
+        try (MockServer server = new MockServer();
+             Connection connection = new Connection(URL.of(URI.create("http://localhost:" + server.port()), null))) {
             assertFalse(connection.isDead());
         }
     }
 
     @Test
-    public void connectionIsDead() throws Exception {
-        Connection connection = new Connection(URL.of(URI.create("http://localhost:" + server.port()),null));
-        connection.close();
-        assertTrue(connection.isDead());
+    public void connectionIsDeadForAClosedSocket() throws Exception {
+        try (MockServer server = new MockServer();
+        Connection connection = new Connection(URL.of(URI.create("http://localhost:" + server.port()),null))) {
+            connection.close();
+            assertTrue(connection.isDead());
+        }
+    }
+
+    @Test
+    public void connectionIsDeadForIncorrectPingResponse() throws Exception {
+        try (MockServer server = new MockServer();
+          Connection connection = new Connection(URL.of(URI.create("http://localhost:" + server.port()),null))) {
+            server.setIncorrectPingResponse();
+            assertTrue(connection.isDead());
+        }
     }
 }
