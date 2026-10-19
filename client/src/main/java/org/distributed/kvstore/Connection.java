@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 
-class Connection implements AutoCloseable {
+public class Connection implements AutoCloseable {
     private final Socket socket;
     private final BufferedReader responseReader;
     private final PrintWriter requestWriter;

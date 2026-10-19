@@ -11,7 +11,7 @@ public class MockServer implements AutoCloseable {
     private final ServerSocket serverSocket;
     private String pingResponse = "PONG";
 
-    public MockServer() {
+    public  MockServer() {
         try {
             serverSocket = new ServerSocket(0,8);
 
