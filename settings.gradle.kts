@@ -12,3 +12,4 @@ plugins {
 
 rootProject.name = "distributed-key-value-storage"
 include("client")
+include("common")

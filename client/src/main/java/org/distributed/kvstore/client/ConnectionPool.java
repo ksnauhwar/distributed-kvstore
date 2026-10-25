@@ -1,4 +1,4 @@
-package org.distributed.kvstore;
+package org.distributed.kvstore.client;
 
 import java.net.URL;
 import java.util.ArrayList;

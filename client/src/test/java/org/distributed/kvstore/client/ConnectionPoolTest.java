@@ -1,4 +1,4 @@
-package org.distributed.kvstore;
+package org.distributed.kvstore.client;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

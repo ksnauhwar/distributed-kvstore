@@ -1,4 +1,4 @@
-package org.distributed.kvstore;
+package org.distributed.kvstore.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
